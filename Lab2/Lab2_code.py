@@ -27,7 +27,7 @@ def rgb_to_grayscale(input_path, output_path):
             pixels[x, y] = y_val
     gray.save(output_path)
 
-def niblack_binarization_fast(input_path, output_path, window_size=5, k=-0.2):
+def niblack_binarization(input_path, output_path, window_size=45, k=-0.2):
     img = Image.open(input_path).convert('L')
     arr = np.array(img, dtype=np.float32)
     h, w = arr.shape
@@ -75,4 +75,4 @@ for fname in os.listdir('src'):
         gray_path = f'results/{fname}_gray.bmp'
         rgb_to_grayscale(f'src/{fname}', gray_path)
         bin_path = f'results/{fname}_niblack.bmp'
-        niblack_binarization_fast(gray_path, bin_path, window_size=5, k=-0.2)
+        niblack_binarization(gray_path, bin_path, window_size=45, k=-0.2)
