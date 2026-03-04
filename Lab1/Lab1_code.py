@@ -13,7 +13,6 @@ def save_image(image_array, save_path):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     img = Image.fromarray((image_array * 255).astype(np.uint8))
     img.save(save_path)
-    print(f"   Сохранено: {save_path}")
 
 
 def separate_rgb_components(image):
@@ -31,15 +30,12 @@ def separate_rgb_components(image):
 def rgb_to_hsi(image):
     r, g, b = image[:, :, 0], image[:, :, 1], image[:, :, 2]
 
-    # Яркостная компонента I
     i = (r + g + b) / 3.0
 
-    # Насыщенность S
     min_rgb = np.minimum(np.minimum(r, g), b)
     s = 1 - 3 * min_rgb / (r + g + b + 1e-10)
     s[r + g + b == 0] = 0
 
-    # Тон H
     numerator = 0.5 * ((r - g) + (r - b))
     denominator = np.sqrt((r - g) ** 2 + (r - b) * (g - b)) + 1e-10
     theta = np.arccos(numerator / denominator)
@@ -47,8 +43,6 @@ def rgb_to_hsi(image):
     h = np.zeros_like(r)
     h[b <= g] = theta[b <= g]
     h[b > g] = 2 * np.pi - theta[b > g]
-
-    # Нормализуем H от 0 до 1
     h = h / (2 * np.pi)
 
     return h, s, i
@@ -60,7 +54,6 @@ def hsi_to_rgb(h, s, i):
     g = np.zeros_like(h)
     b = np.zeros_like(h)
 
-    # Сектор RG (0 <= H < 2π/3)
     mask_rg = (h >= 0) & (h < 2 * np.pi / 3)
     if np.any(mask_rg):
         b[mask_rg] = i[mask_rg] * (1 - s[mask_rg])
@@ -68,7 +61,6 @@ def hsi_to_rgb(h, s, i):
                                    np.cos(np.pi / 3 - h[mask_rg] + 1e-10))
         g[mask_rg] = 3 * i[mask_rg] - (r[mask_rg] + b[mask_rg])
 
-    # Сектор GB (2π/3 <= H < 4π/3)
     mask_gb = (h >= 2 * np.pi / 3) & (h < 4 * np.pi / 3)
     if np.any(mask_gb):
         h_adj = h[mask_gb] - 2 * np.pi / 3
@@ -77,7 +69,6 @@ def hsi_to_rgb(h, s, i):
                                    np.cos(np.pi / 3 - h_adj + 1e-10))
         b[mask_gb] = 3 * i[mask_gb] - (r[mask_gb] + g[mask_gb])
 
-    # Сектор BR (4π/3 <= H < 2π)
     mask_br = (h >= 4 * np.pi / 3) & (h < 2 * np.pi)
     if np.any(mask_br):
         h_adj = h[mask_br] - 4 * np.pi / 3
@@ -105,7 +96,6 @@ def bilinear_interpolation(image, x, y):
 
     x_int = math.floor(x)
     y_int = math.floor(y)
-
     x_frac = x - x_int
     y_frac = y - y_int
 
@@ -132,124 +122,68 @@ def bilinear_interpolation(image, x, y):
                                q21 * x_frac * (1 - y_frac) +
                                q12 * (1 - x_frac) * y_frac +
                                q22 * x_frac * y_frac)
-
     return result
 
 
 def zoom_image(image, factor):
     h, w, c = image.shape
-
-    new_h = int(round(h * factor))
-    new_w = int(round(w * factor))
-
-    new_h = max(1, new_h)
-    new_w = max(1, new_w)
+    new_h = max(1, int(round(h * factor)))
+    new_w = max(1, int(round(w * factor)))
 
     result = np.zeros((new_h, new_w, c))
 
     for i in range(new_h):
         for j in range(new_w):
-            src_x = j / factor
-            src_y = i / factor
-
-            src_x = max(0, min(src_x, w - 1e-10))
-            src_y = max(0, min(src_y, h - 1e-10))
-
+            src_x = max(0, min(j / factor, w - 1e-10))
+            src_y = max(0, min(i / factor, h - 1e-10))
             result[i, j] = bilinear_interpolation(image, src_x, src_y)
 
     return result
 
 
 def main():
-    # Пути к файлам
     input_image_path = 'Photo/photo-lab1.png'
-    output_dir = 'Lab1'
+    output_dir = 'results'
 
     os.makedirs(output_dir, exist_ok=True)
 
-    # Загрузка изображения
-    print("Загрузка изображения...")
     original = load_image(input_image_path)
-    print(f"Оригинал: {original.shape[1]}x{original.shape[0]}")
-
-    # Сохраняем оригинал для демонстрации "до"
     save_image(original, os.path.join(output_dir, '00_original.png'))
 
-    print("\n1. ЦВЕТОВЫЕ МОДЕЛИ")
-
-    # 1.1 Выделить компоненты R, G, B
-    print("\n1.1 Выделение RGB компонент:")
+    # 1.1
     r, g, b = separate_rgb_components(original)
     save_image(r, os.path.join(output_dir, '1-1_r.png'))
     save_image(g, os.path.join(output_dir, '1-1_g.png'))
     save_image(b, os.path.join(output_dir, '1-1_b.png'))
 
-    # 1.2 Привести к HSI, сохранить яркостную компоненту
-    print("\n1.2 Преобразование в HSI, сохранение яркостной компоненты:")
+    # 1.2
     h, s, i = rgb_to_hsi(original)
     i_component = np.stack([i, i, i], axis=2)
     save_image(i_component, os.path.join(output_dir, '1-2_i_component.png'))
 
-    # 1.3 Инвертировать яркостную компоненту
-    print("\n1.3 Инвертирование яркостной компоненты:")
+    # 1.3
     inverted = invert_lightness(original)
     save_image(inverted, os.path.join(output_dir, '1-3_inverted.png'))
 
-    print("\n2. ПЕРЕДИСКРЕТИЗАЦИЯ")
+    M, N = 2, 3
+    K = M / N
 
-    M = 2  # Растяжение
-    N = 3  # Сжатие
-    K = M / N  # Итоговый коэффициент
-
-    print(f"\nПараметры: M={M}, N={N}, K={K:.3f}")
-
-    # 2.1 Растяжение в M раз
-    print(f"\n2.1 Растяжение в {M} раза:")
+    # 2.1
     stretched = zoom_image(original, M)
     save_image(stretched, os.path.join(output_dir, f'2-1_stretched_{M}x.png'))
 
-    # 2.2 Сжатие в N раз
-    print(f"\n2.2 Сжатие в {N} раза:")
+    # 2.2
     compressed = zoom_image(original, 1 / N)
     save_image(compressed, os.path.join(output_dir, f'2-2_compressed_{N}x.png'))
 
-    # 2.3 Передискретизация в K раз (два прохода)
-    print(f"\n2.3 Передискретизация в {K:.3f} раза (два прохода):")
-    # Сначала растяжение, потом сжатие
+    # 2.3
     temp = zoom_image(original, M)
     two_pass = zoom_image(temp, 1 / N)
     save_image(two_pass, os.path.join(output_dir, f'2-3_resampled_two_pass_{K:.2f}x.png'))
 
-    # 2.4 Передискретизация в K раз (один проход)
-    print(f"\n2.4 Передискретизация в {K:.3f} раза (один проход):")
+    # 2.4
     one_pass = zoom_image(original, K)
     save_image(one_pass, os.path.join(output_dir, f'2-4_resampled_one_pass_{K:.2f}x.png'))
-
-    # Вывод информации о размерах
-    print("\n" + "=" * 50)
-    print("РАЗМЕРЫ ИЗОБРАЖЕНИЙ:")
-    print("=" * 50)
-    print(f"Оригинал:           {original.shape[1]}x{original.shape[0]}")
-    print(f"Растяжение ({M}x):     {stretched.shape[1]}x{stretched.shape[0]}")
-    print(f"Сжатие (1/{N}):       {compressed.shape[1]}x{compressed.shape[0]}")
-    print(f"Два прохода ({K:.2f}x): {two_pass.shape[1]}x{two_pass.shape[0]}")
-    print(f"Один проход ({K:.2f}x): {one_pass.shape[1]}x{one_pass.shape[0]}")
-
-    print("\n" + "=" * 50)
-    print("СОХРАНЕННЫЕ ФАЙЛЫ:")
-    print("=" * 50)
-    print("00_original.png - оригинал (для демонстрации 'до')")
-    print("\n1. Цветовые модели:")
-    print("  1-1_r.png - красная компонента")
-    print("  1-1_g.png - зеленая компонента")
-    print("  1-1_b.png - синяя компонента")
-    print("  1-2_i_component.png - яркостная компонента HSI")
-    print("  1-3_inverted.png - инвертированная яркость")
-    print("\n2. Передискретизация:")
-    print(f"  2-1_stretched_{M}x.png - растяжение в {M} раза")
-    print(f"  2-2_compressed_{N}x.png - сжатие в {N} раза")
-    print(f"  2-3_resampled_two_pass_{K:.2f}x.png - передискретизация (два прохода)")
-    print(f"  2-4_resampled_one_pass_{K:.2f}x.png - передискретизация (один проход)")
 
 
 if __name__ == "__main__":
