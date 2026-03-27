@@ -2,65 +2,65 @@
 
 ### Изображение 1
 **До обработки**
-![Исходное](src/original_00.png)
+![Исходное](src/image-0.2-2.jpeg)
 
 **После обработки**
-![Отфильтрованное](results/filtered_00.png)
+![Отфильтрованное](results/image-0.2-2_filtered.png)
 
 **Разностное изображение**
-![Разностное](results/difference_00.png)
+![Разностное](results/image-0.2-2_diff.png)
 
-**Разностное изображение**
-![Разностное усиленное](results/difference_contrasted_00.png)
+**Разностное изображение (усиленное в 10 раз)**
+![Разностное усиленное](results/image-0.2-2_diff_contrasted.png)
 
 ### Изображение 2
 **До обработки**
-![Исходное](src/original_01.png)
+![Исходное](src/image-0.7.jpeg)
 
 **После обработки**
-![Отфильтрованное](results/filtered_01.png)
+![Отфильтрованное](results/image-0.7_filtered.png)
 
 **Разностное изображение**
-![Разностное](results/difference_01.png)
+![Разностное](results/image-0.7_diff.png)
 
-**Разностное изображение**
-![Разностное усиленное](results/difference_contrasted_01.png)
+**Разностное изображение (усиленное в 10 раз)**
+![Разностное усиленное](results/image-0.7_diff_contrasted.png)
 
 ### Изображение 3
 **До обработки**
-![Исходное](src/original_02.png)
+![Исходное](src/image-0.jpeg)
 
 **После обработки**
-![Отфильтрованное](results/filtered_02.png)
+![Отфильтрованное](results/image-0_filtered.png)
 
 **Разностное изображение**
-![Разностное](results/difference_02.png)
+![Разностное](results/image-0_diff.png)
 
-**Разностное изображение**
-![Разностное усиленное](results/difference_contrasted_02.png)
+**Разностное изображение (усиленное в 10 раз)**
+![Разностное усиленное](results/image-0_diff_contrasted.png)
 
 ### Изображение 4
 **До обработки**
-![Исходное](src/original_03.png)
+![Исходное](src/image-1-2.jpeg)
 
 **После обработки**
-![Отфильтрованное](results/filtered_03.png)
+![Отфильтрованное](results/image-1-2_filtered.png)
 
 **Разностное изображение**
-![Разностное](results/difference_03.png)
+![Разностное](results/image-1-2_diff.png)
 
-**Разностное изображение**
-![Разностное усиленное](results/difference_contrasted_03.png)
+**Разностное изображение (усиленное в 10 раз)**
+![Разностное усиленное](results/image-1-2_diff_contrasted.png)
 
 ### Изображение 5
 **До обработки**
-![Исходное](src/original_04.png)
+![Исходное](src/image-2-2.jpeg)
 
 **После обработки**
-![Отфильтрованное](results/filtered_04.png)
+![Отфильтрованное](results/image-2-2_filtered.png)
 
 **Разностное изображение**
-![Разностное](results/difference_04.png)
+![Разностное](results/image-2-2_diff.png)
 
-**Разностное изображение**
-![Разностное усиленное](results/difference_contrasted_04.png)
+**Разностное изображение (усиленное в 10 раз)**
+![Разностное усиленное](results/image-2-2_diff_contrasted.png)
