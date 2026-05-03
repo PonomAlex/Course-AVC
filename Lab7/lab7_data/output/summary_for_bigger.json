@@ -1,0 +1,13 @@
+{
+  "expected_text": "მიყვარხარ",
+  "recognized_text": "ყიჯეარსარ",
+  "errors": 4,
+  "accuracy": 0.555556,
+  "feature_dim": 5,
+  "feature_weight": 1.0,
+  "profile_weight": 0.0,
+  "d_max": 6.78718379,
+  "proximity_formula": "1 - d / d_max",
+  "bmp": "phrase_size_experiment.bmp",
+  "num_segments": 9
+}

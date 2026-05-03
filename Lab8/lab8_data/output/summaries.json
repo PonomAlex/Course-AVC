@@ -1,0 +1,13 @@
+[
+  {
+    "variant": 18,
+    "descriptor": "HOG_Hnorm",
+    "brightness_transform": "log_L_hsl",
+    "hog_cell_px": 16,
+    "hog_bins": 9,
+    "source_image": "photo-lab1.png",
+    "hog_dim": 12150,
+    "cosine_similarity_hnorm": 0.99798947,
+    "l2_difference_hnorm": 0.06341181
+  }
+]
